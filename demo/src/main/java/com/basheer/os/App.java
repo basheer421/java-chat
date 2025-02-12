@@ -8,7 +8,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.geometry.Pos;
-import javafx.geometry.Insets;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
@@ -25,29 +24,28 @@ public class App extends Application {
     private TextField messageField;
     private PrintWriter out;
     private BufferedReader in;
-    private int clientNumber;
 
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Chat Client");
 
-chatArea = new TextArea();
-chatArea.getStyleClass().add("text-area");
+        chatArea = new TextArea();
+        chatArea.getStyleClass().add("text-area");
         chatArea.setEditable(false);
 
-messageField = new TextField();
-messageField.getStyleClass().add("text-field");
+        messageField = new TextField();
+        messageField.getStyleClass().add("text-field");
         messageField.setPromptText("Enter your message here");
         messageField.setOnAction(e -> sendMessage());
 
         Button sendButton = new Button("Send");
         sendButton.setOnAction(e -> sendMessage());
 
-HBox inputBox = new HBox(10, messageField, sendButton);
-HBox.setHgrow(messageField, Priority.ALWAYS);
-HBox.setHgrow(sendButton, Priority.ALWAYS);
-VBox vbox = new VBox(10, chatArea, inputBox);
-vbox.setAlignment(Pos.CENTER);
+        HBox inputBox = new HBox(10, messageField, sendButton);
+        HBox.setHgrow(messageField, Priority.ALWAYS);
+        HBox.setHgrow(sendButton, Priority.ALWAYS);
+        VBox vbox = new VBox(10, chatArea, inputBox);
+        vbox.setAlignment(Pos.CENTER);
         Scene scene = new Scene(vbox, 400, 300);
         scene.getStylesheets().add(getClass().getResource("/com/basheer/os/styles.css").toExternalForm());
 
@@ -59,7 +57,7 @@ vbox.setAlignment(Pos.CENTER);
 
     private void connectToServer() {
         try {
-            Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+            socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
 
@@ -94,6 +92,8 @@ vbox.setAlignment(Pos.CENTER);
         }
     }
 
+    private Socket socket;
+
     private void closeConnections() {
         try {
             if (in != null) {
@@ -101,6 +101,9 @@ vbox.setAlignment(Pos.CENTER);
             }
             if (out != null) {
                 out.close();
+            }
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
             }
         } catch (IOException e) {
             System.out.println("Error closing connections: " + e.getMessage());
