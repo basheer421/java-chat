@@ -19,8 +19,8 @@ This is a simple JavaFX chat application that allows users to send and receive m
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/your-username/javafx-chat-app.git
-   cd javafx-chat-app
+   git clone https://github.com/basheer421/java-chat.git
+   cd java-chat/demo
    ```
 
 2. Build the project using Maven:
