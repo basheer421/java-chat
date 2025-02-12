@@ -36,14 +36,30 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.6</version>
                 <executions>
-                    <execution>
-                        <!-- Default configuration for running -->
-                        <!-- Usage: mvn clean javafx:run -->
-                        <id>default-cli</id>
-                        <configuration>
-                            <mainClass>com.basheer.os.App</mainClass>
-                        </configuration>
-                    </execution>
+    <execution>
+        <!-- Default configuration for running -->
+        <!-- Usage: mvn clean javafx:run -->
+        <id>default-cli</id>
+        <configuration>
+            <mainClass>com.basheer.os.App</mainClass>
+        </configuration>
+    </execution>
+    <execution>
+        <!-- Configuration for running the chat server -->
+        <!-- Usage: mvn clean javafx:run@run-server -->
+        <id>run-server</id>
+        <configuration>
+            <mainClass>com.basheer.os.ChatServer</mainClass>
+        </configuration>
+    </execution>
+    <execution>
+        <!-- Configuration for running the chat client -->
+        <!-- Usage: mvn clean javafx:run@run-client -->
+        <id>run-client</id>
+        <configuration>
+            <mainClass>com.basheer.os.ChatClient</mainClass>
+        </configuration>
+    </execution>
                 </executions>
             </plugin>
         </plugins>
