@@ -7,6 +7,7 @@ import java.util.*;
 public class ChatServer {
     private static final int PORT = 12345;
     private static Set<ClientHandler> clientHandlers = new HashSet<>();
+    private static int clientCounter = 0;
 
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
@@ -17,7 +18,7 @@ public class ChatServer {
                     Socket socket = serverSocket.accept();
                     System.out.println("New client connected");
 
-                    ClientHandler clientHandler = new ClientHandler(socket);
+                    ClientHandler clientHandler = new ClientHandler(socket, ++clientCounter);
                     clientHandlers.add(clientHandler);
                     new Thread(clientHandler).start();
                 } catch (IOException ex) {
@@ -49,14 +50,17 @@ class ClientHandler implements Runnable {
     private BufferedReader in;
     private PrintWriter out;
     private String clientName;
+    private int clientNumber;
 
-    public ClientHandler(Socket socket) {
+    public ClientHandler(Socket socket, int clientNumber) {
         this.socket = socket;
+        this.clientNumber = clientNumber;
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
             clientName = in.readLine();
             System.out.println(clientName + " has joined the chat");
+            out.println("You are client number " + clientNumber);
         } catch (IOException e) {
             closeConnections();
         }
@@ -68,7 +72,7 @@ class ClientHandler implements Runnable {
         try {
             while ((message = in.readLine()) != null) {
                 System.out.println("Received: " + message);
-                ChatServer.broadcastMessage(clientName + ": " + message, this);
+                ChatServer.broadcastMessage(clientNumber + ": " + message, this);
             }
         } catch (IOException e) {
             System.out.println("Error handling client: " + e.getMessage());

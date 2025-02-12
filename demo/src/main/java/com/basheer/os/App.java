@@ -20,6 +20,8 @@ public class App extends Application {
     private TextArea chatArea;
     private TextField messageField;
     private PrintWriter out;
+    private BufferedReader in;
+    private int clientNumber;
 
     @Override
     public void start(Stage primaryStage) {
@@ -30,6 +32,7 @@ public class App extends Application {
 
         messageField = new TextField();
         messageField.setPromptText("Enter your message here");
+        messageField.setOnAction(e -> sendMessage());
 
         Button sendButton = new Button("Send");
         sendButton.setOnAction(e -> sendMessage());
@@ -44,8 +47,9 @@ public class App extends Application {
     }
 
     private void connectToServer() {
-        try (Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT)) {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        try {
+            Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
 
             // Send client name to the server
@@ -57,12 +61,12 @@ public class App extends Application {
                     String message;
                     while ((message = in.readLine()) != null) {
                         String finalMessage = message;
-                        Platform.runLater(() -> {
-                            chatArea.appendText(finalMessage + "\n");
-                        });
+                        Platform.runLater(() -> chatArea.appendText(finalMessage + "\n"));
                     }
                 } catch (IOException ex) {
                     System.out.println("Error reading messages: " + ex.getMessage());
+                } finally {
+                    closeConnections();
                 }
             }).start();
         } catch (IOException ex) {
@@ -74,7 +78,21 @@ public class App extends Application {
         String message = messageField.getText();
         if (!message.isEmpty()) {
             out.println(message);
+            chatArea.appendText("You: " + message + "\n");
             messageField.clear();
+        }
+    }
+
+    private void closeConnections() {
+        try {
+            if (in != null) {
+                in.close();
+            }
+            if (out != null) {
+                out.close();
+            }
+        } catch (IOException e) {
+            System.out.println("Error closing connections: " + e.getMessage());
         }
     }
 
