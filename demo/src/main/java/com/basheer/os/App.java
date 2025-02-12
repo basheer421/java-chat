@@ -6,6 +6,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.geometry.Pos;
+import javafx.geometry.Insets;
+import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -27,18 +31,25 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Chat Client");
 
-        chatArea = new TextArea();
+chatArea = new TextArea();
+chatArea.getStyleClass().add("text-area");
         chatArea.setEditable(false);
 
-        messageField = new TextField();
+messageField = new TextField();
+messageField.getStyleClass().add("text-field");
         messageField.setPromptText("Enter your message here");
         messageField.setOnAction(e -> sendMessage());
 
         Button sendButton = new Button("Send");
         sendButton.setOnAction(e -> sendMessage());
 
-        VBox vbox = new VBox(chatArea, messageField, sendButton);
+HBox inputBox = new HBox(10, messageField, sendButton);
+HBox.setHgrow(messageField, Priority.ALWAYS);
+HBox.setHgrow(sendButton, Priority.ALWAYS);
+VBox vbox = new VBox(10, chatArea, inputBox);
+vbox.setAlignment(Pos.CENTER);
         Scene scene = new Scene(vbox, 400, 300);
+        scene.getStylesheets().add(getClass().getResource("/com/basheer/os/styles.css").toExternalForm());
 
         primaryStage.setScene(scene);
         primaryStage.show();
